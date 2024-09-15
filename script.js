@@ -1,163 +1,153 @@
-body{
+function getHistory() {
 
-    font - family: 'Open Sans', sans - serif;
-
-    background - color: black;
+    return document.getElementById("history-value").innerText;
 
 }
 
-#container{
+function printHistory(num) {
 
-    width: 1000px;
-
-    height: 550px;
-
-    background - image: linear - gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(cal.jpge);
-
-    margin: 20px auto;
+    document.getElementById("history-value").innerText = num;
 
 }
 
-#calculator{
+function getOutput() {
 
-    width: 320px;
-
-    height: 520px;
-
-    background - color: #eaedef;
-
-    margin: 0 auto;
-
-    top: 20px;
-
-    position: relative;
-
-    border - radius: 5px;
-
-    box - shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    return document.getElementById("output-value").innerText;
 
 }
 
-#keyboard{
+function printOutput(num) {
 
-    height: 400px;
+    if (num == "") {
 
-}
+        document.getElementById("output-value").innerText = num;
 
-.operator, .number, .empty{
+    }
 
-    width: 50px;
+    else {
 
-    height: 50px;
+        document.getElementById("output-value").innerText = getFormattedNumber(num);
 
-    margin: 15px;
-
-    float: left;
-
-    border - radius: 50 %;
-
-    border - width: 0;
-
-    font - weight: bold;
-
-    font - size: 15px;
+    }
 
 }
 
-.number, .empty{
+function getFormattedNumber(num) {
 
-    background - color: #eaedef;
+    if (num == "-") {
 
-}
+        return "";
 
-.number, .operator{
+    }
 
-    cursor: pointer;
+    var n = Number(num);
 
-}
+    var value = n.toLocaleString("en");
 
-.operator: active, .number:active{
-
-    font - size: 13px;
+    return value;
 
 }
 
-.operator: focus, .number: focus, .empty:focus{
+function reverseNumberFormat(num) {
 
-    outline: 0;
-
-}
-
-#result{
-
-    height: 120px;
+    return Number(num.replace(/,/g, ''));
 
 }
 
-#history{
+var operator = document.getElementsByClassName("operator");
 
-    text - align: right;
+for (var i = 0; i < operator.length; i++) {
 
-    height: 20px;
+    operator[i].addEventListener('click', function () {
 
-    margin: 0 20px;
+        if (this.id == "clear") {
 
-    padding - top: 20px;
+            printHistory("");
 
-    font - size: 15px;
+            printOutput("");
 
-    color: #919191;
+        }
+
+        else if (this.id == "backspace") {
+
+            var output = reverseNumberFormat(getOutput()).toString();
+
+            if (output) {//if output has a value
+
+                output = output.substr(0, output.length - 1);
+
+                printOutput(output);
+
+            }
+
+        }
+
+        else {
+
+            var output = getOutput();
+
+            var history = getHistory();
+
+            if (output == "" && history != "") {
+
+                if (isNaN(history[history.length - 1])) {
+
+                    history = history.substr(0, history.length - 1);
+
+                }
+
+            }
+
+            if (output != "" || history != "") {
+
+                output = output == "" ? output : reverseNumberFormat(output);
+
+                history = history + output;
+
+                if (this.id == "=") {
+
+                    var result = eval(history);
+
+                    printOutput(result);
+
+                    printHistory("");
+
+                }
+
+                else {
+
+                    history = history + this.id;
+
+                    printHistory(history);
+
+                    printOutput("");
+
+                }
+
+            }
+
+        }
+
+    });
 
 }
 
-#output{
+var number = document.getElementsByClassName("number");
 
-    text - align: right;
+for (var i = 0; i < number.length; i++) {
 
-    height: 60px;
+    number[i].addEventListener('click', function () {
 
-    margin: 10px 20px;
+        var output = reverseNumberFormat(getOutput());
 
-    font - size: 30px;
+        if (output != NaN) { //if output is a number
 
-}
+            output = output + this.id;
 
-button: nth - child(4){
+            printOutput(output);
 
-    font - size: 20px;
+        }
 
-    background - color: #20b2aa;
-
-}
-
-button: nth - child(8){
-
-    font - size: 20px;
-
-    background - color: #ffa500;
-
-}
-
-button: nth - child(12){
-
-    font - size: 20px;
-
-    background - color: #f08080;
-
-}
-
-button: nth - child(16){
-
-    font - size: 20px;
-
-    background - color: #7d93e0;
-
-}
-
-button: nth - child(20){
-
-    font - size: 20px;
-
-    background - color: #9477af;
+    });
 
 }
